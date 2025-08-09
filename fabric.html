@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Textile Cost Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    button { margin-top: 15px; padding: 10px; width: 100%; background: #007bff; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .result { background: #e6ffe6; padding: 15px; border-radius: 10px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Textile Cost Calculator</h1>
+  <form id="calcForm">
+    <label>Warp Count</label><input type="number" id="warpCount" required>
+    <label>Weft Count</label><input type="number" id="weftCount" required>
+    <label>Ends per Inch</label><input type="number" id="endsPerInch" required>
+    <label>Picks per Inch</label><input type="number" id="picksPerInch" required>
+    <label>Width (inches)</label><input type="number" id="width" required>
+    <label>Reed Space (inches)</label><input type="number" id="reedSpace" required>
+    <label>Tape Length (meters)</label><input type="number" id="tapeLength" required>
+
+    <label>Warp Rate per Kg (₹)</label><input type="number" id="warpRate" required>
+    <label>Weft Rate per Kg (₹)</label><input type="number" id="weftRate" required>
+    <label>Sizing Charges per Kg (₹)</label><input type="number" id="sizingRate" required>
+    <label>Weaving Charges per Meter (₹)</label><input type="number" id="weavingRate" required>
+    <label>Other Charges per Meter (₹)</label><input type="number" id="otherCharges" value="0">
+    <label>Profit Percentage (%)</label><input type="number" id="profitPercent" value="0">
+
+    <button type="button" onclick="calculateCost()">Calculate</button>
+    <button type="reset">Reset</button>
+  </form>
+
+  <div id="result" class="result" style="display:none;"></div>
+
+  <script>
+    function calculateCost() {
+      const warpCount = parseFloat(document.getElementById('warpCount').value);
+      const weftCount = parseFloat(document.getElementById('weftCount').value);
+      const endsPerInch = parseFloat(document.getElementById('endsPerInch').value);
+      const picksPerInch = parseFloat(document.getElementById('picksPerInch').value);
+      const width = parseFloat(document.getElementById('width').value);
+      const reedSpace = parseFloat(document.getElementById('reedSpace').value);
+      const tapeLength = parseFloat(document.getElementById('tapeLength').value);
+
+      const warpRate = parseFloat(document.getElementById('warpRate').value);
+      const weftRate = parseFloat(document.getElementById('weftRate').value);
+      const sizingRate = parseFloat(document.getElementById('sizingRate').value);
+      const weavingRate = parseFloat(document.getElementById('weavingRate').value);
+      const otherCharges = parseFloat(document.getElementById('otherCharges').value);
+      const profitPercent = parseFloat(document.getElementById('profitPercent').value);
+
+      const totalEnds = endsPerInch * width;
+
+      const warpWeight = (tapeLength * totalEnds) / 66600 / warpCount;
+      const weftWeight = (picksPerInch * reedSpace) / 1690 / weftCount;
+      const totalWeight = warpWeight + weftWeight;
+
+      const gsm = ((endsPerInch / warpCount) + (picksPerInch / weftCount)) * 0.68 * width;
+
+      const warpCost = warpWeight * warpRate;
+      const weftCost = weftWeight * weftRate;
+      const sizingCost = warpWeight * sizingRate;
+      const baseCost = warpCost + weftCost + sizingCost + weavingRate + otherCharges;
+      const profit = baseCost * (profitPercent / 100);
+      const totalCost = baseCost + profit;
+
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').innerHTML = `
+        <strong>Total Ends:</strong> ${totalEnds.toFixed(2)}<br>
+        <strong>Warp Weight per Meter:</strong> ${warpWeight.toFixed(4)} Kg<br>
+        <strong>Weft Weight per Meter:</strong> ${weftWeight.toFixed(4)} Kg<br>
+        <strong>Total Weight per Meter:</strong> ${totalWeight.toFixed(4)} Kg<br>
+        <strong>Fabric GSM:</strong> ${gsm.toFixed(2)}<br><br>
+
+        <strong>Warp Cost (₹):</strong> ₹${warpCost.toFixed(2)}<br>
+        <strong>Weft Cost (₹):</strong> ₹${weftCost.toFixed(2)}<br>
+        <strong>Sizing Charges (₹):</strong> ₹${sizingCost.toFixed(2)}<br>
+        <strong>Weaving Charges (₹):</strong> ₹${weavingRate.toFixed(2)}<br>
+        <strong>Other Charges (₹):</strong> ₹${otherCharges.toFixed(2)}<br>
+        <strong>Profit (₹):</strong> ₹${profit.toFixed(2)}<br><br>
+        <strong>Total Cost per Meter (₹):</strong> <strong>₹${totalCost.toFixed(2)}</strong>
+      `;
+    }
+  </script>
+
+</body>
+</html>
