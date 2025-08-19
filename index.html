@@ -30,7 +30,7 @@
     <label>Warp Rate per Kg (₹)</label><input type="number" id="warpRate" required>
     <label>Weft Rate per Kg (₹)</label><input type="number" id="weftRate" required>
     <label>Sizing Charges per Kg (₹)</label><input type="number" id="sizingRate" required>
-    <label>Weaving Charges per Meter (₹)</label><input type="number" id="weavingRate" required>
+    <label>Weaving Charge per Pick per Inch (₹)</label><input type="number" id="weavingPerPick" required>
     <label>Other Charges per Meter (₹)</label><input type="number" id="otherCharges" value="0">
     <label>Profit Percentage (%)</label><input type="number" id="profitPercent" value="0">
 
@@ -53,7 +53,7 @@
       const warpRate = parseFloat(document.getElementById('warpRate').value);
       const weftRate = parseFloat(document.getElementById('weftRate').value);
       const sizingRate = parseFloat(document.getElementById('sizingRate').value);
-      const weavingRate = parseFloat(document.getElementById('weavingRate').value);
+      const weavingPerPick = parseFloat(document.getElementById('weavingPerPick').value);
       const otherCharges = parseFloat(document.getElementById('otherCharges').value);
       const profitPercent = parseFloat(document.getElementById('profitPercent').value);
 
@@ -65,8 +65,11 @@
 
       const gsm = ((endsPerInch / warpCount) + (picksPerInch / weftCount)) * 0.68 * width;
 
-      // New grams per sq.meter calculation
-      const gramsPerSqMeter = (gsm / width) * 39.375;
+      // Grams per sq.meter calculation
+      const gramsPerSqMeter = Math.round((gsm / width) * 39.375);
+
+      // Calculate weaving charges per meter
+      const weavingRate = weavingPerPick * picksPerInch;
 
       const warpCost = warpWeight * warpRate;
       const weftCost = weftWeight * weftRate;
@@ -82,12 +85,12 @@
         <strong>Weft Weight per Meter:</strong> ${weftWeight.toFixed(4)} Kg<br>
         <strong>Total Weight per Meter:</strong> ${totalWeight.toFixed(4)} Kg<br>
         <strong>Fabric GSM:</strong> ${Math.round(gsm)}<br>
-        <strong>Grams per sq.meter:</strong> ${Math.round(gramsPerSqMeter)} g/m²<br><br>
+        <strong>Grams per sq.meter:</strong> ${gramsPerSqMeter} g/m²<br><br>
 
         <strong>Warp Cost (₹):</strong> ₹${warpCost.toFixed(2)}<br>
         <strong>Weft Cost (₹):</strong> ₹${weftCost.toFixed(2)}<br>
         <strong>Sizing Charges (₹):</strong> ₹${sizingCost.toFixed(2)}<br>
-        <strong>Weaving Charges (₹):</strong> ₹${weavingRate.toFixed(2)}<br>
+        <strong>Weaving Charges per Meter (₹):</strong> ₹${weavingRate.toFixed(2)}<br>
         <strong>Other Charges (₹):</strong> ₹${otherCharges.toFixed(2)}<br>
         <strong>Profit (₹):</strong> ₹${profit.toFixed(2)}<br><br>
         <strong>Total Cost per Meter (₹):</strong> <strong>₹${totalCost.toFixed(2)}</strong>
@@ -97,5 +100,3 @@
 
 </body>
 </html>
-
-
