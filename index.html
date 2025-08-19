@@ -65,6 +65,9 @@
 
       const gsm = ((endsPerInch / warpCount) + (picksPerInch / weftCount)) * 0.68 * width;
 
+      // New grams per sq.meter calculation
+      const gramsPerSqMeter = (gsm / width) * 39.375;
+
       const warpCost = warpWeight * warpRate;
       const weftCost = weftWeight * weftRate;
       const sizingCost = warpWeight * sizingRate;
@@ -78,7 +81,8 @@
         <strong>Warp Weight per Meter:</strong> ${warpWeight.toFixed(4)} Kg<br>
         <strong>Weft Weight per Meter:</strong> ${weftWeight.toFixed(4)} Kg<br>
         <strong>Total Weight per Meter:</strong> ${totalWeight.toFixed(4)} Kg<br>
-        <strong>Fabric GSM:</strong> ${gsm.toFixed(2)}<br><br>
+        <strong>Fabric GSM:</strong> ${Math.round(gsm)}<br>
+        <strong>Grams per sq.meter:</strong> ${Math.round(gramsPerSqMeter)} g/m²<br><br>
 
         <strong>Warp Cost (₹):</strong> ₹${warpCost.toFixed(2)}<br>
         <strong>Weft Cost (₹):</strong> ₹${weftCost.toFixed(2)}<br>
@@ -93,4 +97,5 @@
 
 </body>
 </html>
+
 
