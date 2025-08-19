@@ -58,24 +58,32 @@
       const otherCharges = parseFloat(document.getElementById('otherCharges').value);
       const profitPercent = parseFloat(document.getElementById('profitPercent').value);
 
+      // Total ends = EPI × width (inches)
       const totalEnds = endsPerInch * width;
 
-      // Convert weights to grams per meter (g/m)
-      const warpWeight = ((tapeLength * totalEnds) / 66600 / warpCount) * 1000;
-      const weftWeight = ((picksPerInch * reedSpace * tapeLength) / 59000 / weftCount) * 1000;
-      const totalWeight = warpWeight + weftWeight; // g/m
+      // Yarn weight factor: 0.5905 g/m for Ne=1
+      // Warp weight (g/m)
+      const warpWeight = (totalEnds * 0.5905) / warpCount;
+      // Weft weight (g/m) → picks per inch × width in inches
+      const weftWeight = (picksPerInch * reedSpace * 0.5905) / weftCount;
+      // Total weight (g/m)
+      const totalWeight = warpWeight + weftWeight;
 
-      // Calculate GSM (grams per square meter)
-      const fabricArea = (width * 0.0254) * 1; // width in meters * 1m length
+      // GSM (grams per square meter)
+      const fabricArea = width * 0.0254; // width in meters × 1 m length
       const gsm = totalWeight / fabricArea;
 
-      // Cost calculations (weights must be converted back to Kg for costing)
+      // Costs (weights → kg for costing)
       const warpCost = (warpWeight / 1000) * warpRate;
       const weftCost = (weftWeight / 1000) * weftRate;
       const sizingCost = (warpWeight / 1000) * sizingRate;
       const baseCost = warpCost + weftCost + sizingCost + weavingRate + otherCharges;
       const profit = baseCost * (profitPercent / 100);
       const totalCost = baseCost + profit;
+
+      // Optional: totals for full tape length
+      const totalWeightForTape_g = totalWeight * tapeLength;
+      const totalCostForTape = totalCost * tapeLength;
 
       document.getElementById('result').style.display = 'block';
       document.getElementById('result').innerHTML = `
@@ -93,10 +101,12 @@
         <strong>Profit (₹):</strong> ₹${profit.toFixed(2)}<br><br>
 
         <div class="highlight">Total Cost per Meter: ₹${totalCost.toFixed(2)}</div>
+        <br>
+        <strong>Total Weight for ${tapeLength} m:</strong> ${totalWeightForTape_g.toFixed(2)} g<br>
+        <strong>Total Cost for ${tapeLength} m:</strong> ₹${totalCostForTape.toFixed(2)}<br>
       `;
     }
   </script>
 
 </body>
 </html>
-
